@@ -58,6 +58,7 @@ app.use(async (ctx) => {
  
   if (ctx.method === 'POST') {
     const { name } = ctx.request;
+    const { file } = ctx.request.files;
     const link = await new Promise((resolve, reject) => {
       const oldPath = file.path;
       const filename = file.name;
