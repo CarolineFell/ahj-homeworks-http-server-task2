@@ -9,7 +9,6 @@ const app = new Koa();
 const public = path.join(__dirname, '/public')
 app.use(koaStatic(public));
 
-// => CORS
 app.use(async (ctx, next) => {
   const origin = ctx.request.get('Origin');
   if (!origin) {
@@ -43,7 +42,6 @@ app.use(async (ctx, next) => {
 const port = process.env.PORT || 7070;
 const server = http.createServer(app.callback()).listen(port)
   
-// => Body Parsers
 app.use(koaBody({
   text: true,
   urlencoded: true,
@@ -51,11 +49,11 @@ app.use(koaBody({
   json: true,
 }));
 
-let listImgs = [];
+let images = [];
 
 app.use(async (ctx) => {
   if (ctx.method === 'GET') {
-    ctx.response.body = listImgs;
+    ctx.response.body = images;
   }
  
   if (ctx.method === 'POST') {
@@ -85,7 +83,7 @@ app.use(async (ctx) => {
       readStream.pipe(writeStream);
     });
     console.log(link);
-    listImgs.push(`http://localhost:7070/${link}`)
+    images.push(`http://localhost:7070/${link}`)
     ctx.response.body = link;
     return;
   };
@@ -93,7 +91,7 @@ app.use(async (ctx) => {
   if (ctx.method === 'DELETE') {
     const { file } = ctx.request.query;
     const fileName = path.parse(file).base;
-    listImgs = listImgs.filter((item) => item !== file);
+    images = images.filter((item) => item !== file);
 
     fs.unlink(`${public}/${fileName}`, (err) => {
       if (err) throw err;
